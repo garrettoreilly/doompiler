@@ -1,16 +1,17 @@
 import Data.List
 import Data.Char
+import Lexer
 
 getProgram :: IO [String]
 getProgram = do
-    ln <- getLine
-    case map toLower ln of
+    line <- getLine
+    case map toLower line of
         "eof" -> return []
-        _ -> fmap (ln:) getProgram
+        _ -> fmap (line:) getProgram
 
 main :: IO ()
 main = do
     putStrLn "Enter program:"
-    program <- getProgram
-    putStrLn "This is your program:"
-    putStrLn $ intercalate "\n" program
+    input <- getProgram
+    let tokenList = lexProgram $ intercalate "\n" input
+    print tokenList
