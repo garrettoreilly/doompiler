@@ -56,7 +56,7 @@ stringTokens ((a, b, c):xs) list
     | c == '\"'           = Token CharList (reverse ('\"' : list ++ "\"")) a b : lexProgram xs
     | c == ' '            = stringTokens xs (c : list)
     | c `elem` ['a'..'z'] = stringTokens xs (c : list)
-    | otherwise           = error $ "Error: Invalid CharList token\nLine " ++ show a ++ ", position " ++ show (b - length list)
+    | otherwise           = error $ "Error: Invalid CharList token\nLine " ++ show a ++ ", position " ++ show (b - length list - 1)
 
 charTokens :: [(Int, Int, Char)] -> [Token]
 charTokens xs
