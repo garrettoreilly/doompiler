@@ -13,6 +13,6 @@ main :: IO ()
 main = do
     putStrLn "Enter program:"
     input <- getProgram
-    let inputList = concatMap (\(a, x) -> [(a, b, [c]) | (b, c) <- zip [1..] x]) $ zip [1..] $ map (++ "\n") input
+    let inputList = concatMap (\(a, x) -> [(a, b, c) | (b, c) <- zip [1..] x]) $ zip [1..] $ map (++ "\n") input
     let tokenList = lexProgram inputList
     print tokenList
