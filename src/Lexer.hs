@@ -28,40 +28,45 @@ data TokenType = Character
 data Token = Token { kind :: TokenType, value :: String, line :: Int, position :: Int }
     deriving (Show)
 
-lexProgram :: String -> [Token]
-lexProgram "" = []
-lexProgram (x:xs)
-    | x `elem` "(){}+$"   = singleCharTokens x : lexProgram xs
-    | [x, head xs] == "!="   = Token BoolOp "!=" 0 0 : lexProgram xs
-    | [x, head xs] == "=="   = Token BoolOp "==" 0 0 : lexProgram xs
-    | x == '='            = Token AssignOp "=" 0 0 : lexProgram xs
-    | x == '\"'           = stringTokens xs []
-    | x `elem` ['0'..'9'] = Token Digit [x] 0 0 : lexProgram xs
-    | x `elem` ['a'..'z'] = charTokens (x:xs)
-    | x == ' '            = lexProgram xs
-    | x == '\n'           = lexProgram xs
-    | otherwise           = error "Uh...what?"
+lexProgram :: [(Int, Int, String)] -> [Token]
+lexProgram [] = []
+lexProgram all@((a, b, c):xs)
+    | head c `elem` "(){}+$"     = singleCharTokens (head all) : lexProgram xs
+    | [head c, getChar1] == "!=" = Token BoolOp "!=" a b : lexProgram xs
+    | [head c, getChar1] == "==" = Token BoolOp "==" a b : lexProgram xs
+    | head c == '='              = Token AssignOp "=" a b : lexProgram xs
+    | head c == '\"'             = stringTokens xs []
+    | head c `elem` ['0'..'9']   = Token Digit c a b : lexProgram xs
+    | head c `elem` ['a'..'z']   = charTokens all
+    | head c == ' '              = lexProgram xs
+    | head c == '\n'             = lexProgram xs
+    | otherwise                  = error "Error: Uh...what?"
+    where getChar1 = (\(_, _, x) -> head x) $ head xs
 
-singleCharTokens :: Char -> Token
-singleCharTokens '(' = Token OpenParen "(" 0 0
-singleCharTokens ')' = Token CloseParen ")" 0 0
-singleCharTokens '{' = Token OpenBrace "{" 0 0
-singleCharTokens '}' = Token CloseBrace "}" 0 0
-singleCharTokens '+' = Token IntOp "+" 0 0
-singleCharTokens '$' = Token EOF "$" 0 0
+singleCharTokens :: (Int, Int, String) -> Token
+singleCharTokens (a, b, "(") = Token OpenParen "(" a b
+singleCharTokens (a, b, ")") = Token CloseParen ")" a b
+singleCharTokens (a, b, "{") = Token OpenBrace "{" a b
+singleCharTokens (a, b, "}") = Token CloseBrace "}" a b
+singleCharTokens (a, b, "+") = Token IntOp "+" a b
+singleCharTokens (a, b, "$") = Token EOF "$" a b
 
-stringTokens :: String -> String -> [Token]
-stringTokens (x:xs) list
-    | x == '\"'           = Token CharList (reverse ('\"' : list ++ "\"")) 0 0 : lexProgram xs
-    | x == ' '            = stringTokens xs (x : list)
-    | x `elem` ['a'..'z'] = stringTokens xs (x : list)
-    | otherwise           = error "Invalid string character"
+stringTokens :: [(Int, Int, String)] -> String -> [Token]
+stringTokens ((a, b, c):xs) list
+    | head c == '\"'           = Token CharList (reverse ('\"' : list ++ "\"")) a b : lexProgram xs
+    | head c == ' '            = stringTokens xs (c ++ list)
+    | head c `elem` ['a'..'z'] = stringTokens xs (c ++ list)
+    | otherwise           = error "Error: Invalid string character"
 
-charTokens :: String -> [Token]
-charTokens ('b':'o':'o':'l':'e':'a':'n':xs) = Token IdType "boolean" 0 0 : lexProgram xs
-charTokens ('s':'t':'r':'i':'n':'g':xs)     = Token IdType "string" 0 0 : lexProgram xs
-charTokens ('i':'n':'t':xs)                 = Token IdType "int" 0 0 : lexProgram xs
-charTokens ('i':'f':xs)                     = Token If "if" 0 0 : lexProgram xs
-charTokens ('w':'h':'i':'l':'e':xs)         = Token While "while" 0 0 : lexProgram xs
-charTokens ('p':'r':'i':'n':'t':xs)         = Token Print "print" 0 0 : lexProgram xs
-charTokens (x:xs)                           = Token Id [x] 0 0 : lexProgram xs
+charTokens :: [(Int, Int, String)] -> [Token]
+charTokens xs
+    | getKeyword 7 == "boolean" = Token IdType "boolean" a b : lexProgram (tail xs)
+    | getKeyword 6 == "string"  = Token IdType "string" a b : lexProgram (tail xs)
+    | getKeyword 3 == "int"     = Token IdType "int" a b : lexProgram ( tail xs)
+    | getKeyword 2 == "if"      = Token If "if" a b : lexProgram (tail xs)
+    | getKeyword 5 == "while"   = Token While "while" a b : lexProgram (tail xs)
+    | getKeyword 5 == "print"   = Token Print "print" a b : lexProgram (tail xs)
+    | otherwise                 = Token Id ((\(_, _, x) -> x) $ head xs) a b : lexProgram (tail xs)
+    where getKeyword x = concatMap (\(_, _, x) -> x) $ take x xs
+          a = (\(a, _, _) -> a) $ head xs
+          b = (\(_, b, _) -> b) $ head xs
