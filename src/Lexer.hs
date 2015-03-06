@@ -60,7 +60,6 @@ singleCharTokens (a, b, ')') = Token CloseParen ")" a b
 singleCharTokens (a, b, '{') = Token OpenBrace "{" a b
 singleCharTokens (a, b, '}') = Token CloseBrace "}" a b
 singleCharTokens (a, b, '+') = Token IntOp "+" a b
-singleCharTokens (a, b, '$') = Token EOF "$" a b
 
 stringTokens :: [(Int, Int, Char)] -> String -> [Token]
 stringTokens ((a, b, c):xs) list
