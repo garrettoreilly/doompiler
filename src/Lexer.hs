@@ -1,4 +1,8 @@
-module Lexer (lexProgram) where
+module Lexer 
+    ( TokenType ( .. )
+    , Token ( .. )
+    , lexProgram
+    ) where
 
 import Data.List
 import Data.Maybe
@@ -23,15 +27,17 @@ data TokenType = Character
                | OpenBrace
                | CloseBrace
                | EOF
+               | Warning
                deriving (Eq, Show)
 
 data Token = Token { kind :: TokenType, value :: String, line :: Int, position :: Int }
     deriving (Show)
 
 lexProgram :: [(Int, Int, Char)] -> [Token]
-lexProgram [] = []
+lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning: Forgetting the EOF, aren't we?" 0 0]
+lexProgram [(a, b, '$')] = [Token EOF "$" a b]
 lexProgram all@((a, b, c):xs)
-    | c `elem` "(){}+$"     = singleCharTokens (head all) : lexProgram xs
+    | c `elem` "(){}+"     = singleCharTokens (head all) : lexProgram xs
     | [c, getChar1] == "!=" = Token BoolOp "!=" a b : lexProgram xs
     | [c, getChar1] == "==" = Token BoolOp "==" a b : lexProgram xs
     | c == '='              = Token AssignOp "=" a b : lexProgram xs
@@ -40,8 +46,13 @@ lexProgram all@((a, b, c):xs)
     | c `elem` ['a'..'z']   = charTokens all
     | c == ' '              = lexProgram xs
     | c == '\n'             = lexProgram xs
+    | c == '$'              = Token EOF "$" a b : endOfFile xs a b
     | otherwise             = error $ "Error: Meow, invalid character\nLine " ++ show a ++ ", position " ++ show b
     where getChar1 = (\(_, _, x) -> x) $ head xs
+
+endOfFile :: [(Int, Int, Char)] -> Int -> Int -> [Token]
+endOfFile [] _ _ = []
+endOfFile _ a b  = [Token Warning "Warning: EOF out of nowhere!" a b]
 
 singleCharTokens :: (Int, Int, Char) -> Token
 singleCharTokens (a, b, '(') = Token OpenParen "(" a b
