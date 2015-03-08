@@ -8,7 +8,8 @@ import Lexer
 parseProgram :: [Token] -> Bool
 parseProgram xs = case findBlock xs of
                       [Token EOF _ _ _] -> True
-                      ys -> error $ show $ value (head ys)
+                      [Token Error _ _ _, Token EOF _ _ _] -> True
+                      (y:ys) -> error $ show (value y) ++ show (kind (head ys))
 
 filterOptions :: [[Token] -> [Token]] -> [Token] -> [Token]
 filterOptions fs ts = case filter (\ t -> kind (head t) /= Error) $ fs <*> [ts] of
