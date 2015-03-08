@@ -28,6 +28,7 @@ data TokenType = Character
                | CloseBrace
                | EOF
                | Warning
+               | Error
                deriving (Eq, Show)
 
 data Token = Token { kind :: TokenType, value :: String, line :: Int, position :: Int }

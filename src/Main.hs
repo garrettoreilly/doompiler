@@ -1,6 +1,7 @@
 import Data.List
 import Control.Monad
 import Lexer
+import Parser
 
 main :: IO ()
 main = do
@@ -10,5 +11,5 @@ main = do
     if kind (last tokenList) == Warning
         then do
             putStrLn $ value (last tokenList)
-            mapM_ print $ init tokenList
-        else mapM_ print tokenList
+            print $ parseProgram $ init tokenList
+        else print $ parseProgram tokenList
