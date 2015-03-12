@@ -7,7 +7,7 @@ import Lexer
 
 parseProgram :: [Token] -> Bool
 parseProgram xs = case findBlock xs of
-                      [] -> True
+                      [Token EOF _ _ _] -> True
                       -- [Token Error _ _ _, Token EOF _ _ _] -> True
                       (y:ys) -> error $ value y ++ show (kind (head ys)) ++ "\nLine " ++ show (line (head ys)) ++ ", position " ++ show (position (head ys))
 
@@ -44,7 +44,7 @@ getId xs = Token Error "Error! Expected ID, received " 0 0 : xs
 getIdType :: [Token] -> [Token]
 getIdType all@(Token Error _ _ _ : xs) = all
 getIdType (Token IdType _ a b : xs) = xs
-getIdType xs = Token Error "Error! Expected assignment operator, received " 0 0 : xs
+getIdType xs = Token Error "Error! Expected ID type, received " 0 0 : xs
 
 getStringExpr :: [Token] -> [Token]
 getStringExpr all@(Token Error _ _ _ : xs) = all
@@ -71,14 +71,9 @@ getIntOp all@(Token Error _ _ _ : xs) = all
 getIntOp (Token IntOp _ a b : xs) = xs
 getIntOp xs = Token Error "Error! Expected int operator, received " 0 0 : xs
 
-getEOF :: [Token] -> [Token]
-getEOF all@(Token Error _ _ _ : xs) = all
-getEOF (Token EOF _ a b : xs) = xs
-getEOF xs = Token Error "Error! Expected EOF, received " 0 0 : xs
-
 findBlock :: [Token] -> [Token]
 findBlock all@(Token Error _ _ _ : xs) = all
-findBlock xs = (getEOF . getCloseBrace . findStatementList . getOpenBrace) xs
+findBlock xs = (getCloseBrace . findStatementList . getOpenBrace) xs
 
 findStatementList :: [Token] -> [Token]
 findStatementList all@(Token Error _ _ _ : xs) = all
@@ -124,5 +119,6 @@ compareList :: [Token] -> [[Token]] -> [Token]
 compareList ts [] = Token Error "Error! Invalid token, received " 0 0 : ts
 compareList ts (x:xs)
     | kind (head x) /= Error = x
+    | tail x == tail ts = compareList ts xs
     | tail x /= ts = x
     | tail x == ts = compareList ts xs
