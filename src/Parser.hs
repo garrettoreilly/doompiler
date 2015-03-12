@@ -109,7 +109,7 @@ findExpr xs = compareList xs $ [findIntExpr, getStringExpr, findBoolExpr, getId]
 
 findBoolExpr :: [Token] -> [Token]
 findBoolExpr all@(Token Error _ _ _ : xs) = all
-findBoolExpr xs = compareList xs $ [getOpenParen . findExpr . getBoolOp . findExpr . getCloseParen, getBoolVal] <*> [xs]
+findBoolExpr xs = compareList xs $ [getCloseParen . findExpr . getBoolOp . findExpr . getOpenParen, getBoolVal] <*> [xs]
 
 findIntExpr :: [Token] -> [Token]
 findIntExpr all@(Token Error _ _ _ : xs) = all
