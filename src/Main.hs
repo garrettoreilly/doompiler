@@ -11,6 +11,6 @@ main = do
     let tokenList = lexProgram inputList
     if kind (last tokenList) == Warning
         then do
-            putStrLn $ value (last tokenList)
+            putStrLn $ "doompiler: " ++ value (last tokenList)
             print $ parseProgram $ init tokenList
         else print $ parseProgram tokenList

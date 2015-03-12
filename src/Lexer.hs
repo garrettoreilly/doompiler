@@ -35,7 +35,7 @@ data Token = Token { kind :: TokenType, value :: String, line :: Int, position :
     deriving (Show, Eq)
 
 lexProgram :: [(Int, Int, Char)] -> [Token]
-lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning: Forgetting the EOF, aren't we?" 0 0]
+lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning! Forgetting the EOF, aren't we?" 0 0]
 lexProgram [(a, b, '$')] = [Token EOF "$" a b]
 lexProgram all@((a, b, c):xs)
     | c `elem` "(){}+"     = singleCharTokens (head all) : lexProgram xs
@@ -54,7 +54,7 @@ lexProgram all@((a, b, c):xs)
 endOfFile :: [(Int, Int, Char)] -> Int -> Int -> [Token]
 endOfFile [] _ _ = []
 endOfFile [(_, _, '\n')] _ _ = []
-endOfFile _ a b  = [Token Warning "Warning: EOF out of nowhere!" a b]
+endOfFile _ a b  = [Token Warning "Warning! EOF out of nowhere!" a b]
 
 singleCharTokens :: (Int, Int, Char) -> Token
 singleCharTokens (a, b, '(') = Token OpenParen "(" a b

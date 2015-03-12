@@ -8,7 +8,6 @@ import Lexer
 parseProgram :: [Token] -> Bool
 parseProgram xs = case findBlock xs of
                       [Token EOF _ _ _] -> True
-                      -- [Token Error _ _ _, Token EOF _ _ _] -> True
                       (y:ys) -> error $ value y ++ show (kind (head ys)) ++ "\nLine " ++ show (line (head ys)) ++ ", position " ++ show (position (head ys))
 
 getOpenBrace :: [Token] -> [Token]
