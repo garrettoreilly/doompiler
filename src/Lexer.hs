@@ -53,6 +53,7 @@ lexProgram all@((a, b, c):xs)
 
 endOfFile :: [(Int, Int, Char)] -> Int -> Int -> [Token]
 endOfFile [] _ _ = []
+endOfFile [(_, _, '\n')] _ _ = []
 endOfFile _ a b  = [Token Warning "Warning: EOF out of nowhere!" a b]
 
 singleCharTokens :: (Int, Int, Char) -> Token
