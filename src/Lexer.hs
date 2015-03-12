@@ -39,8 +39,8 @@ lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning: Forgetting the EOF, 
 lexProgram [(a, b, '$')] = [Token EOF "$" a b]
 lexProgram all@((a, b, c):xs)
     | c `elem` "(){}+"     = singleCharTokens (head all) : lexProgram xs
-    | [c, getChar1] == "!=" = Token BoolOp "!=" a b : lexProgram xs
-    | [c, getChar1] == "==" = Token BoolOp "==" a b : lexProgram xs
+    | [c, getChar1] == "!=" = Token BoolOp "!=" a b : lexProgram (tail xs)
+    | [c, getChar1] == "==" = Token BoolOp "==" a b : lexProgram (tail xs)
     | c == '='              = Token AssignOp "=" a b : lexProgram xs
     | c == '\"'             = stringTokens xs []
     | c `elem` ['0'..'9']   = Token Digit [c] a b : lexProgram xs
