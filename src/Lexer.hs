@@ -32,7 +32,7 @@ data TokenType = Character
                deriving (Eq, Show)
 
 data Token = Token { kind :: TokenType, value :: String, line :: Int, position :: Int }
-    deriving (Show)
+    deriving (Show, Eq)
 
 lexProgram :: [(Int, Int, Char)] -> [Token]
 lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning: Forgetting the EOF, aren't we?" 0 0]
