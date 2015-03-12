@@ -77,6 +77,8 @@ charTokens xs
     | getKeyword 2 == "if"      = Token If "if" a b : lexProgram (drop 2  xs)
     | getKeyword 5 == "while"   = Token While "while" a b : lexProgram (drop 5 xs)
     | getKeyword 5 == "print"   = Token Print "print" a b : lexProgram (drop 5 xs)
+    | getKeyword 4 == "true"    = Token Boolean "true" a b : lexProgram (drop 4 xs)
+    | getKeyword 5 == "false"   = Token Boolean "false" a b : lexProgram (drop 5 xs)
     | otherwise                 = Token Id [(\(_, _, x) -> x) $ head xs] a b : lexProgram (tail xs)
     where getKeyword x = map (\(_, _, c) -> c) $ take x xs
           a = (\(a, _, _) -> a) $ head xs
