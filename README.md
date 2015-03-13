@@ -21,5 +21,5 @@ where file.txt contains the program you would like to run.
 
 To run the compiler on ever program file in a directory, you can do:
 ```
-for file in <directory>/*.txt; cabal run < $file; done
+for file in <directory>/*.txt; do cabal run < $file; done
 ```
