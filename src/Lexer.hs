@@ -34,6 +34,9 @@ data TokenType = Character
 data Token = Token { kind :: TokenType, value :: String, line :: Int, position :: Int }
     deriving (Show, Eq)
 
+-- | lexProgram receives the list of characters that make up the program
+-- | zipped into a list of tuples with each character's line and position.
+-- | It then identifies tokens and prepends them to a token list.
 lexProgram :: [(Int, Int, Char)] -> [Token]
 lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning! Forgetting the EOF, aren't we?" 0 0]
 lexProgram [(a, b, '$')] = [Token EOF "$" a b]
@@ -51,11 +54,13 @@ lexProgram all@((a, b, c):xs)
     | otherwise             = error $ "Error: Meow, invalid character\nLine " ++ show a ++ ", position " ++ show b
     where getChar1 = (\(_, _, x) -> x) $ head xs
 
+-- | Checks for end of file token and returns a warning token if it isn't found.
 endOfFile :: [(Int, Int, Char)] -> Int -> Int -> [Token]
 endOfFile [] _ _ = []
 endOfFile [(_, _, '\n')] _ _ = []
 endOfFile _ a b  = [Token Warning "Warning! EOF out of nowhere!" a b]
 
+-- | Identifies single character tokens.
 singleCharTokens :: (Int, Int, Char) -> Token
 singleCharTokens (a, b, '(') = Token OpenParen "(" a b
 singleCharTokens (a, b, ')') = Token CloseParen ")" a b
@@ -63,6 +68,7 @@ singleCharTokens (a, b, '{') = Token OpenBrace "{" a b
 singleCharTokens (a, b, '}') = Token CloseBrace "}" a b
 singleCharTokens (a, b, '+') = Token IntOp "+" a b
 
+-- | Identifies string tokens.
 stringTokens :: [(Int, Int, Char)] -> String -> [Token]
 stringTokens ((a, b, c):xs) list
     | c == '\"'           = Token CharList (reverse ('\"' : list ++ "\"")) a b : lexProgram xs
@@ -70,6 +76,7 @@ stringTokens ((a, b, c):xs) list
     | c `elem` ['a'..'z'] = stringTokens xs (c : list)
     | otherwise           = error $ "Error: Invalid CharList token\nLine " ++ show a ++ ", position " ++ show (b - length list - 1)
 
+-- | Identifies reserved keyword tokens.
 charTokens :: [(Int, Int, Char)] -> [Token]
 charTokens xs
     | getKeyword 7 == "boolean" = Token IdType "boolean" a b : lexProgram (drop 7 xs)
