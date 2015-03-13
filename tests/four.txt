@@ -1,0 +1,11 @@
+{
+    string a
+    string b
+    {
+        boolean c
+        boolean d
+    }
+    a = "hello"
+    b = "world"
+    print(b)
+}$

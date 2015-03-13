@@ -13,7 +13,13 @@ brew install cabal-install
 
 Once you have installed Haskell and cloned this repo, you can run the compiler from the project directory by doing:
 ```
+cabal configure
 cabal build
 cabal run < file.txt
 ```
 where file.txt contains the program you would like to run.
+
+To run the compiler on ever program file in a directory, you can do:
+```
+for file in <directory>/*.txt; cabal run < $file; done
+```
