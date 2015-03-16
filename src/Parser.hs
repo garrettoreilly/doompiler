@@ -19,7 +19,7 @@ compareList :: [Token] -> [[Token]] -> [Token]
 compareList ts [] = Token Error "Error! Invalid token, received " 0 0 : ts
 compareList ts (x:xs)
     | kind (head x) /= Error = x
-    | tail x == tail ts = compareList ts xs
+    | tail x == tail ts && kind (head ts) == Digit = compareList ts xs
     | tail x /= ts = x
     | tail x == ts = compareList ts xs
 
@@ -30,62 +30,62 @@ compareList ts (x:xs)
 -- | Otherwise, they prepend an error token denoting a mismatched token.
 getOpenBrace :: [Token] -> [Token]
 getOpenBrace all@(Token Error _ _ _ : xs) = all
-getOpenBrace (Token OpenBrace _ a b : xs) = xs
+getOpenBrace (Token OpenBrace _ _ _ : xs) = xs
 getOpenBrace xs = Token Error "Error! Expected open brace, received " 0 0 : xs
 
 getCloseBrace :: [Token] -> [Token]
 getCloseBrace all@(Token Error _ _ _ : xs) = all
-getCloseBrace (Token CloseBrace _ a b : xs) = xs
+getCloseBrace (Token CloseBrace _ _ _ : xs) = xs
 getCloseBrace xs = Token Error "Error! Expected close brace, received " 0 0 : xs
 
 getOpenParen :: [Token] -> [Token]
 getOpenParen all@(Token Error _ _ _ : xs) = all
-getOpenParen (Token OpenParen _ a b : xs) = xs
+getOpenParen (Token OpenParen _ _ _ : xs) = xs
 getOpenParen xs = Token Error "Error! Expected open paren, received " 0 0 : xs
 
 getCloseParen :: [Token] -> [Token]
 getCloseParen all@(Token Error _ _ _ : xs) = all
-getCloseParen (Token CloseParen _ a b : xs) = xs
+getCloseParen (Token CloseParen _ _ _ : xs) = xs
 getCloseParen xs = Token Error "Error! Expected close paren, received " 0 0 : xs
 
 getAssignOp :: [Token] -> [Token]
 getAssignOp all@(Token Error _ _ _ : xs) = all
-getAssignOp (Token AssignOp _ a b : xs) = xs
+getAssignOp (Token AssignOp _ _ _ : xs) = xs
 getAssignOp xs = Token Error "Error! Expected assignment operator, received " 0 0 : xs
 
 getId :: [Token] -> [Token]
 getId all@(Token Error _ _ _ : xs) = all
-getId (Token Id _ a b : xs) = xs
+getId (Token Id _ _ _ : xs) = xs
 getId xs = Token Error "Error! Expected ID, received " 0 0 : xs
 
 getIdType :: [Token] -> [Token]
 getIdType all@(Token Error _ _ _ : xs) = all
-getIdType (Token IdType _ a b : xs) = xs
+getIdType (Token IdType _ _ _ : xs) = xs
 getIdType xs = Token Error "Error! Expected ID type, received " 0 0 : xs
 
 getStringExpr :: [Token] -> [Token]
 getStringExpr all@(Token Error _ _ _ : xs) = all
-getStringExpr (Token CharList _ a b : xs) = xs
+getStringExpr (Token CharList _ _ _ : xs) = xs
 getStringExpr xs = Token Error "Error! Expected string, received " 0 0 : xs
 
 getBoolVal :: [Token] -> [Token]
 getBoolVal all@(Token Error _ _ _ : xs) = all
-getBoolVal (Token Boolean _ a b : xs) = xs
+getBoolVal (Token Boolean _ _ _ : xs) = xs
 getBoolVal xs = Token Error "Error! Expected boolean value, received " 0 0 : xs
 
 getBoolOp :: [Token] -> [Token]
 getBoolOp all@(Token Error _ _ _ : xs) = all
-getBoolOp (Token BoolOp _ a b : xs) = xs
+getBoolOp (Token BoolOp _ _ _ : xs) = xs
 getBoolOp xs = Token Error "Error! Expected boolean operator, received " 0 0 : xs
 
 getDigit :: [Token] -> [Token]
 getDigit all@(Token Error _ _ _ : xs) = all
-getDigit (Token Digit _ a b : xs) = xs
+getDigit (Token Digit _ _ _ : xs) = xs
 getDigit xs = Token Error "Error! Expected digit, received " 0 0 : xs
 
 getIntOp :: [Token] -> [Token]
 getIntOp all@(Token Error _ _ _ : xs) = all
-getIntOp (Token IntOp _ a b : xs) = xs
+getIntOp (Token IntOp _ _ _ : xs) = xs
 getIntOp xs = Token Error "Error! Expected int operator, received " 0 0 : xs
 
 -- | The following "find" functions expand terminals in the grammar by composing

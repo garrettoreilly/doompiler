@@ -23,3 +23,5 @@ To run the compiler on ever program file in a directory, you can do:
 ```
 for file in <directory>/*.txt; do cabal run < $file; done
 ```
+
+The grammar for this compiler can be found [here](http://labouseur.com/courses/compilers/grammar.pdf).
