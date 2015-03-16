@@ -19,7 +19,7 @@ compareList :: [Token] -> [[Token]] -> [Token]
 compareList ts [] = Token Error "Error! Invalid token, received " 0 0 : ts
 compareList ts (x:xs)
     | kind (head x) /= Error = x
-    | tail x == tail ts = compareList ts xs
+    | tail x == tail ts && kind (head ts) == Digit = compareList ts xs
     | tail x /= ts = x
     | tail x == ts = compareList ts xs
 
