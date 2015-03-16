@@ -35,8 +35,8 @@ data Token = Token { kind :: TokenType, value :: String, line :: Int, position :
     deriving (Show, Eq)
 
 -- | lexProgram receives the list of characters that make up the program
--- | zipped into a list of tuples with each character's line and position.
--- | It then identifies tokens and prepends them to a token list.
+--   zipped into a list of tuples with each character's line and position.
+--   It then identifies tokens and prepends them to a token list.
 lexProgram :: [(Int, Int, Char)] -> [Token]
 lexProgram [] = [Token EOF "$" 0 0, Token Warning "Warning! Forgetting the EOF, aren't we?" 0 0]
 lexProgram [(a, b, '$')] = [Token EOF "$" a b]
