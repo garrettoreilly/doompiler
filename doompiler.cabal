@@ -18,7 +18,7 @@ cabal-version:       >=1.10
 
 executable doompiler
   main-is:             Main.hs
-  -- other-modules:       
+  other-modules:       Lexer, Parser
   -- other-extensions:    
   build-depends:       base >=4.7 && <4.8
   hs-source-dirs:      src
